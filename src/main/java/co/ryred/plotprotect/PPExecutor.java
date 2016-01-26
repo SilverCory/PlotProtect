@@ -35,6 +35,7 @@
 
 package co.ryred.plotprotect;
 
+import co.ryred.red_commons.Cooldown;
 import com.intellectualcrafters.plot.object.Plot;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -42,6 +43,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Cory Redmond on 26/01/2016.
@@ -59,8 +62,23 @@ public class PPExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
+        Cooldown cooldown = Cooldown.get(PPExecutor.class, 1L, TimeUnit.MINUTES);
+
+        if(!(sender instanceof Player)) {
+            sender.sendMessage(c("&eOnly players can use these commands!"));
+            return true;
+        }
+
+        Player pSender = ((Player) sender);
+
+        if( cooldown.isChilling( pSender.getUniqueId() ) ) {
+            sender.sendMessage(c("&cHey there! Calm down..."));
+            sender.sendMessage(c("&Wait " + cooldown.getCooldownTimeFormatted(pSender.getUniqueId())));
+            return true;
+        }
+
         if( args.length >= 1 && args[0].equalsIgnoreCase("add") ) {
-            if( args.length == 3 && sender instanceof Player ) {
+            if(args.length == 3) {
                 OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[1]);
                 if( plugin.password.equals(args[2]) ) {
                     if( player == null || !player.hasPlayedBefore() ) {
@@ -72,6 +90,7 @@ public class PPExecutor implements CommandExecutor {
                     }
                 } else {
                     sender.sendMessage(c("&eThe password you supplied was incorrect!"));
+                    cooldown.addChilling(pSender.getUniqueId());
                     return true;
                 }
             } else {
@@ -80,7 +99,7 @@ public class PPExecutor implements CommandExecutor {
                 return true;
             }
         } else if( args.length >= 1 && args[0].equalsIgnoreCase("remove") ) {
-            if( args.length == 3 && sender instanceof Player ) {
+            if(args.length == 3) {
                 OfflinePlayer player = plugin.getServer().getOfflinePlayer(args[1]);
                 if( plugin.password.equals(args[2]) ) {
                     if( player == null || !player.hasPlayedBefore() ) {
@@ -92,6 +111,7 @@ public class PPExecutor implements CommandExecutor {
                     }
                 } else {
                     sender.sendMessage(c("&eThe password you supplied was incorrect!"));
+                    cooldown.addChilling(pSender.getUniqueId());
                     return true;
                 }
             } else {
@@ -100,7 +120,7 @@ public class PPExecutor implements CommandExecutor {
                 return true;
             }
         } else if( args.length >= 1 && args[0].equalsIgnoreCase("protect") ) {
-            if( args.length == 2 && sender instanceof Player ) {
+            if(args.length == 2) {
                 if( plugin.password.equals(args[1]) ) {
                     Plot plot = plugin.getPlot(((Player) sender).getLocation());
                     if( plot != null && plot.getId() != null ) {
@@ -115,6 +135,7 @@ public class PPExecutor implements CommandExecutor {
                     }
                 } else {
                     sender.sendMessage(c("&eThe password you supplied was incorrect!"));
+                    cooldown.addChilling(pSender.getUniqueId());
                     return true;
                 }
             } else {
@@ -123,7 +144,7 @@ public class PPExecutor implements CommandExecutor {
                 return true;
             }
         } else if( args.length >= 1 && args[0].equalsIgnoreCase("unprotect") ) {
-            if( args.length == 2 && sender instanceof Player ) {
+            if(args.length == 2) {
                 if( plugin.password.equals(args[1]) ) {
                     Plot plot = plugin.getPlot(((Player) sender).getLocation());
                     if( plot != null && plot.getId() != null) {
@@ -138,6 +159,7 @@ public class PPExecutor implements CommandExecutor {
                     }
                 } else {
                     sender.sendMessage(c("&eThe password you supplied was incorrect!"));
+                    cooldown.addChilling(pSender.getUniqueId());
                     return true;
                 }
             } else {
@@ -146,12 +168,13 @@ public class PPExecutor implements CommandExecutor {
                 return true;
             }
         } else if( args.length >= 1 && args[0].equalsIgnoreCase("auth") ) {
-            if( args.length == 2 && sender instanceof Player ) {
+            if(args.length == 2) {
                 if( plugin.password.equals(args[1]) ) {
                     plugin.allowedPlayers.add(((Player) sender).getUniqueId());
                     sender.sendMessage(c("&aSuccessfully authenticated."));
                 } else {
                     sender.sendMessage(c("&eThe password you supplied was incorrect!"));
+                    cooldown.addChilling(pSender.getUniqueId());
                     return true;
                 }
             } else {
@@ -181,7 +204,7 @@ public class PPExecutor implements CommandExecutor {
         return true;
     }
 
-    private String c( String string ) {
+    public static String c( String string ) {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
 

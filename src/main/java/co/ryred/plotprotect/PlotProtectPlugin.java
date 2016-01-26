@@ -35,6 +35,7 @@
 
 package co.ryred.plotprotect;
 
+import co.ryred.red_commons.Cooldown;
 import co.ryred.red_commons.Logs;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
@@ -54,6 +55,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Cory Redmond on 26/01/2016.
@@ -88,6 +90,8 @@ public class PlotProtectPlugin extends JavaPlugin implements Listener {
         
         getCommand( "PlotProtect" ).setExecutor( new PPExecutor( this ) );
 
+        getServer().getScheduler().runTaskTimerAsynchronously(this, Cooldown::purge, 20*60L, 20*60L);
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -100,6 +104,14 @@ public class PlotProtectPlugin extends JavaPlugin implements Listener {
                 event.setCancelled(true);
                 event.setUseInteractedBlock(Event.Result.DENY);
                 event.setUseItemInHand(Event.Result.DENY);
+
+                Cooldown cooldown = Cooldown.get(PlotProtectPlugin.class, 1L, TimeUnit.MINUTES);
+
+                if(!cooldown.isChilling(event.getPlayer().getUniqueId())) {
+                    event.getPlayer().sendMessage(PPExecutor.c("&9This plot is protected, you can't build here!"));
+                    cooldown.addChilling(event.getPlayer().getUniqueId());
+                }
+
             }
 
         }
