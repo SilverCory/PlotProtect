@@ -94,7 +94,7 @@ public class PlotProtectPlugin extends JavaPlugin implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInteract( PlayerInteractEvent event ) {
 
         if( !allowedPlayers.contains(event.getPlayer().getUniqueId() ) && event.getClickedBlock() != null && !isIgnoreType( event.getClickedBlock(), event.getAction() ) && PS.get().isPlotWorld( event.getClickedBlock().getLocation().getWorld().getName() ) ){
