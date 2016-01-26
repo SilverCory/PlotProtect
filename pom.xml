@@ -132,7 +132,7 @@
         <!-- My commons -->
         <dependency>
             <groupId>co.ryred</groupId>
-            <artifactId>red-commons</artifactId>
+            <artifactId>Red-Commons</artifactId>
             <version>[1.0.0,)</version>
         </dependency>
 
