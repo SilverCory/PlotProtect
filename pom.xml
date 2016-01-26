@@ -97,10 +97,10 @@
             <id>Spigot-Hub</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
-        <!--<repository>
+        <repository>
             <id>ryred-mvn</id>
             <url>http://mvn.ryred.co/repository/release/</url>
-        </repository>-->
+        </repository>
         <repository>
             <id>xephi-repo</id>
             <url>http://ci.xephi.fr/plugin/repository/everything/</url>
