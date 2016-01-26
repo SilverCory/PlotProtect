@@ -73,7 +73,7 @@ public class PPExecutor implements CommandExecutor {
 
         if( cooldown.isChilling( pSender.getUniqueId() ) ) {
             sender.sendMessage(c("&cHey there! Calm down..."));
-            sender.sendMessage(c("&Wait " + cooldown.getCooldownTimeFormatted(pSender.getUniqueId())));
+            sender.sendMessage(c("&cWait " + cooldown.getCooldownTimeFormatted(pSender.getUniqueId())));
             return true;
         }
 
