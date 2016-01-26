@@ -133,7 +133,7 @@
         <dependency>
             <groupId>co.ryred</groupId>
             <artifactId>red-commons</artifactId>
-            <version>LATEST</version>
+            <version>[1.0.0,)</version>
         </dependency>
 
         <!-- PlotSquared -->
