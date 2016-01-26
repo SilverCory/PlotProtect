@@ -1,0 +1,6 @@
+debug: false
+
+password: Password123
+
+locked-plots:
+    - 'lll'

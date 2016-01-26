@@ -1,0 +1,17 @@
+name: PlotProtect
+
+author: Cory Redmond
+
+version: ${pom.version}-B#${env.BUILD_NUMBER}
+
+main: co.ryred.plotprotect.PlotProtectPlugin
+
+description: Add the ability to protect plots from even ops via passwords.
+
+commands:
+  PlotProtect:
+      aliases:
+      - 'pp'
+      - 'plp'
+      description: Protect the plot
+      usage: /pp
