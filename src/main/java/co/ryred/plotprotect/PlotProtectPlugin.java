@@ -39,6 +39,7 @@ import co.ryred.red_commons.Cooldown;
 import co.ryred.red_commons.Logs;
 import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.object.PlotArea;
 import com.plotsquared.bukkit.util.BukkitUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -97,7 +98,7 @@ public class PlotProtectPlugin extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onInteract( PlayerInteractEvent event ) {
 
-        if( !allowedPlayers.contains(event.getPlayer().getUniqueId() ) && event.getClickedBlock() != null && !isIgnoreType( event.getClickedBlock(), event.getAction() ) && PS.get().isPlotWorld( event.getClickedBlock().getLocation().getWorld().getName() ) ){
+        if( !allowedPlayers.contains(event.getPlayer().getUniqueId() ) && event.getClickedBlock() != null && !isIgnoreType( event.getClickedBlock(), event.getAction() ) && PS.get().hasPlotArea( event.getClickedBlock().getLocation().getWorld().getName() ) ){
 
             Plot plot = getPlot(event.getClickedBlock().getLocation());
             if( plot != null && plot.getId() != null && locked_plots.contains(plot.getId().toString()) ) {
@@ -123,8 +124,16 @@ public class PlotProtectPlugin extends JavaPlugin implements Listener {
         return (action == Action.RIGHT_CLICK_BLOCK || action == Action.RIGHT_CLICK_AIR) && (type == Material.WOOD_BUTTON || type == Material.STONE_BUTTON || type == Material.SIGN || type == Material.SIGN_POST || type == Material.WALL_SIGN || type == Material.LEVER || type == Material.BIRCH_DOOR || type == Material.ACACIA_DOOR || type == Material.DARK_OAK_DOOR || type == Material.IRON_DOOR || type == Material.JUNGLE_DOOR || type == Material.SPRUCE_DOOR || type == Material.TRAP_DOOR || type == Material.WOOD_DOOR || type == Material.GOLD_PLATE || type == Material.IRON_PLATE || type == Material.STONE_PLATE || type == Material.WOOD_PLATE || type == Material.IRON_TRAPDOOR || type == Material.IRON_DOOR_BLOCK || type == Material.WORKBENCH);
     }
 
-    public Plot getPlot( Location location ) {
-        return BukkitUtil.getLocation(location).getPlot();
+    public static Plot getPlot( final Location loc ) {
+
+        if ( !PS.get().hasPlotArea(loc.getWorld().getName()) ) {
+            return null;
+        }
+
+        com.intellectualcrafters.plot.object.Location iloc = BukkitUtil.getLocation(loc);
+        PlotArea plotArea = PS.get().getPlotAreaAbs( iloc );
+        return plotArea.getPlot( iloc );
+
     }
 
     public void saveLockedPlots() {
